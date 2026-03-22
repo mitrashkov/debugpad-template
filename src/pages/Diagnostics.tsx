@@ -223,7 +223,7 @@ const Diagnostics = () => {
             <div>
               <h2 className="text-xl font-bold mb-2">Ready to Analyze</h2>
               <p className="text-muted text-sm">
-                Start the AI-powered analysis to detect issues, security vulnerabilities, and performance bottlenecks.
+                Стартирайте AI анализа за откриване на проблеми, сигурностни уязвимости и bottleneck-и в производителността.
               </p>
             </div>
             <button onClick={startAnalysis} className="btn-primary px-8 py-3 flex items-center gap-2 mx-auto">

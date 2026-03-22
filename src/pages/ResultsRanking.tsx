@@ -32,7 +32,7 @@ const ResultsRanking = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold uppercase tracking-tighter">Results & Ranking</h1>
-          <p className="text-muted text-sm mt-1">System performance benchmarks and historical ranking data.</p>
+          <p className="text-muted text-sm mt-1">Референтни стойности за производителност на системата и исторически данни за класиране.</p>
         </div>
         <div className="flex gap-3">
           <button className="btn-secondary flex items-center gap-2">

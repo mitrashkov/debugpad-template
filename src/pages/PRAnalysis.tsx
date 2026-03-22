@@ -100,7 +100,7 @@ const PRAnalysis = () => {
           <div>
             <h2 className="text-xl font-bold mb-2">PR Analysis</h2>
             <p className="text-muted text-sm">
-              Analyze pull requests for <span className="text-white font-mono">{state.repoUrl}</span> to detect risks and generate intelligence reports.
+              Анализирайте pull request-ове за <span className="text-white font-mono">{state.repoUrl}</span> за откриване на рискове и генериране на интелигентни доклади.
             </p>
           </div>
           <button 

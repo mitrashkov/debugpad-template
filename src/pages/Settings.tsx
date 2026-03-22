@@ -85,7 +85,7 @@ const Settings = () => {
     <div className="p-8 max-w-4xl mx-auto space-y-8">
       <div>
         <h1 className="text-3xl font-bold uppercase tracking-tighter">System Settings</h1>
-        <p className="text-muted text-sm mt-1">Configure your AI provider and security preferences.</p>
+        <p className="text-muted text-sm mt-1">Конфигуриране на AI доставчик и предпочитания за сигурност.</p>
       </div>
 
       {/* API Configuration Card */}

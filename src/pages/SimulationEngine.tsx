@@ -35,7 +35,7 @@ const SimulationEngine = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold uppercase tracking-tighter">Simulation Engine</h1>
-          <p className="text-muted text-sm mt-1">Stress test logic models and predict system failure points.</p>
+          <p className="text-muted text-sm mt-1">Тестване на логически модели и прогнозиране на точките на системен отказ.</p>
         </div>
         <div className="flex gap-3">
           <button 

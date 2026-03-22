@@ -97,7 +97,7 @@ const FixEngine = () => {
           <div>
             <h2 className="text-xl font-bold mb-2">Fix Engine</h2>
             <p className="text-muted text-sm">
-              Generate AI-powered fixes for issues detected in <span className="text-white font-mono">{state.repoUrl}</span>
+              Генерирайте AI базирани поправки за откритите проблеми в <span className="text-white font-mono">{state.repoUrl}</span>
             </p>
           </div>
           <button 
@@ -138,12 +138,12 @@ const FixEngine = () => {
       <div className="p-8 h-full flex flex-col">
         <div className="mb-8">
           <h1 className="text-3xl font-bold uppercase tracking-tighter">Fix Engine</h1>
-          <p className="text-muted text-sm mt-1">No fixes available. Run analysis first to detect issues.</p>
+          <p className="text-muted text-sm mt-1">Няма налични поправки. Първо стартирайте анализ за откриване на проблеми.</p>
         </div>
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <CheckCircle2 className="w-12 h-12 text-success mx-auto mb-4" />
-            <p className="text-muted">No issues to fix! Your code looks clean.</p>
+            <p className="text-muted">Няма проблеми за поправяне! Кодът изглежда чист.</p>
           </div>
         </div>
       </div>

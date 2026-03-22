@@ -32,7 +32,7 @@ const Observability = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold uppercase tracking-tighter">Observability</h1>
-          <p className="text-muted text-sm mt-1">Deep runtime tracing and distributed system observability.</p>
+          <p className="text-muted text-sm mt-1">Дълбоко проследяване на изпълнението и наблюдение на разпределени системи.</p>
         </div>
         <div className="flex gap-3">
           <button className="btn-secondary flex items-center gap-2">

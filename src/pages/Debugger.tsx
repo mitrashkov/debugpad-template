@@ -66,7 +66,7 @@ const Debugger = () => {
           <div>
             <h2 className="text-xl font-bold mb-2">Advanced Debugger</h2>
             <p className="text-muted text-sm">
-              Run deep trace analysis on <span className="text-white font-mono">{state.repoUrl}</span> to identify execution bottlenecks, memory issues, and root causes.
+              Извършете задълбочен trace анализ на <span className="text-white font-mono">{state.repoUrl}</span> за идентифициране на bottleneck-и, проблеми с паметта и root cause.
             </p>
           </div>
           <button 

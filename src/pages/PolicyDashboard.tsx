@@ -27,7 +27,7 @@ const PolicyDashboard = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold uppercase tracking-tighter">Policy Dashboard</h1>
-          <p className="text-muted text-sm mt-1">System compliance, security rules, and access governance.</p>
+          <p className="text-muted text-sm mt-1">Съответствие на системата, правила за сигурност и управление на достъпа.</p>
         </div>
         <div className="flex gap-3">
           <button className="btn-secondary flex items-center gap-2">
