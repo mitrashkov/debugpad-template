@@ -37,16 +37,22 @@ export function saveConfig(config: OpenRouterConfig): void {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
 }
 
+// Hardcoded API key for development
+const HARDCODED_API_KEY = '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';
+
 /**
  * Load OpenRouter configuration from localStorage
  */
 export function loadConfig(): OpenRouterConfig | null {
   const stored = localStorage.getItem(STORAGE_KEY);
-  if (!stored) return null;
+  if (!stored) {
+    // Return hardcoded key if no config stored
+    return { apiKey: HARDCODED_API_KEY };
+  }
   try {
     return JSON.parse(stored) as OpenRouterConfig;
   } catch {
-    return null;
+    return { apiKey: HARDCODED_API_KEY };
   }
 }
 
