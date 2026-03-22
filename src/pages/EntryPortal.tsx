@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Terminal, 
   Search, 
@@ -9,19 +9,31 @@ import {
   ArrowRight,
   Code2,
   Globe,
-  Github
+  Github,
+  Key,
+  AlertTriangle
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '../lib/utils';
+import { isConfigured } from '../lib/openrouter';
+import { setRepoUrl } from '../lib/store';
 
 const EntryPortal = () => {
   const [url, setUrl] = useState('');
+  const [hasApiKey, setHasApiKey] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setHasApiKey(isConfigured());
+  }, []);
 
   const handleConnect = (e: React.FormEvent) => {
     e.preventDefault();
     if (url) {
-      navigate('/diagnostics');
+      // Save URL to global state
+      setRepoUrl(url);
+      // Navigate to model selection
+      navigate('/select-model');
     }
   };
 
@@ -38,7 +50,7 @@ const EntryPortal = () => {
         <div className="text-center space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full mb-4">
             <Zap className="w-3 h-3 text-success" />
-            <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">System Intelligence v4.0</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">DebugPad v0.1.0</span>
           </div>
           <h1 className="text-6xl font-bold tracking-tighter uppercase">
             Debug<span className="text-white/40">Pad</span>
@@ -47,6 +59,36 @@ const EntryPortal = () => {
             The digital surgeon for your codebase. Connect your repository to initiate deep surgical diagnostics and AI-driven root cause analysis.
           </p>
         </div>
+
+        {/* API Key Warning */}
+        {!hasApiKey && (
+          <div className="bg-warning/10 border border-warning/20 rounded-sm p-4 flex items-start gap-3">
+            <AlertTriangle className="w-5 h-5 text-warning shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-sm text-white/80">
+                <span className="font-bold">AI features require configuration.</span> Add your OpenRouter API key in{' '}
+                <button 
+                  onClick={() => navigate('/settings')}
+                  className="text-warning hover:underline inline-flex items-center gap-1"
+                >
+                  <Key className="w-3 h-3" /> Settings
+                </button>{' '}
+                to enable AI-powered analysis.
+              </p>
+              <p className="text-[10px] text-muted mt-2">
+                Your key stays on your device. We never see it. Get a free key at{' '}
+                <a 
+                  href="https://openrouter.ai/keys" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-white/60 hover:text-white"
+                >
+                  openrouter.ai/keys
+                </a>
+              </p>
+            </div>
+          </div>
+        )}
 
         <form onSubmit={handleConnect} className="space-y-6">
           <div className="relative group">
@@ -82,30 +124,15 @@ const EntryPortal = () => {
           </div>
         </form>
 
-        <div className="grid grid-cols-3 gap-6 pt-12">
-          {[
-            { label: 'Surgical Debugging', icon: Cpu, desc: 'Deep trace analysis and memory partition validation.' },
-            { label: 'Kinetic Intel', icon: ShieldCheck, desc: 'Real-time PR risk assessment and delta analysis.' },
-            { label: 'Simulation Engine', icon: Zap, desc: 'Stress test your logic models before deployment.' },
-          ].map((feature, i) => (
-            <div key={i} className="card bg-white/2 border-white/5 p-6 space-y-3 hover:bg-white/5 transition-all">
-              <div className="p-2 bg-white/5 w-fit rounded-sm">
-                <feature.icon className="w-4 h-4 text-white" />
-              </div>
-              <h3 className="text-xs font-bold uppercase tracking-widest">{feature.label}</h3>
-              <p className="text-[10px] text-muted leading-relaxed">{feature.desc}</p>
-            </div>
-          ))}
-        </div>
       </div>
 
       <div className="absolute bottom-8 left-8 flex items-center gap-4">
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
-          <span className="text-[10px] font-bold uppercase tracking-widest text-muted">Engine: Kinetic-v4</span>
+          <span className="text-[10px] font-bold uppercase tracking-widest text-muted">Engine: DebugPad-v0.1.0</span>
         </div>
         <div className="w-px h-3 bg-white/10" />
-        <span className="text-[10px] font-bold uppercase tracking-widest text-muted">Uptime: 99.99%</span>
+        <span className="text-[10px] font-bold uppercase tracking-widest text-muted">Open Source</span>
       </div>
     </div>
   );

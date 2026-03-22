@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   GitPullRequest, 
   ShieldAlert, 
@@ -9,31 +9,148 @@ import {
   MoreHorizontal,
   Zap,
   Activity,
-  FileCode
+  FileCode,
+  GitBranch,
+  AlertCircle,
+  Box,
+  Sparkles,
+  Loader2
 } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { getState, subscribe, type AnalysisState, type Issue } from '../lib/store';
+
+interface PR {
+  id: string;
+  title: string;
+  author: string;
+  risk: 'High' | 'Medium' | 'Low';
+  status: string;
+  time: string;
+  filesChanged: number;
+  insertions: number;
+  deletions: number;
+}
 
 const PRAnalysis = () => {
-  const prs = [
-    { id: 'PR-1204', title: 'Optimize memory partition validation', author: 'hypex-dev', risk: 'Low', status: 'Analyzing', time: '12m ago' },
-    { id: 'PR-1203', title: 'Refactor neural handshake protocol', author: 'arch-01', risk: 'High', status: 'Blocked', time: '1h ago' },
-    { id: 'PR-1202', title: 'Fix thread concurrency bottleneck', author: 'dev-alpha', risk: 'Medium', status: 'Approved', time: '3h ago' },
-    { id: 'PR-1201', title: 'Update system topology mapping', author: 'hypex-dev', risk: 'Low', status: 'Merged', time: '5h ago' },
-  ];
+  const [state, setLocalState] = useState<AnalysisState>(getState());
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [prs, setPrs] = useState<PR[]>([]);
+
+  useEffect(() => {
+    const unsubscribe = subscribe((newState) => {
+      setLocalState(newState);
+      if (newState.analysisResults?.issues) {
+        generatePRsFromIssues(newState.analysisResults.issues);
+      }
+    });
+    return unsubscribe;
+  }, []);
+
+  // Generate PRs from issues for demo purposes
+  const generatePRsFromIssues = (issues: Issue[]) => {
+    const generatedPRs: PR[] = issues.slice(0, 4).map((issue, index) => ({
+      id: `PR-${1204 - index}`,
+      title: issue.title,
+      author: 'debugpad-ai',
+      risk: issue.severity === 'critical' ? 'High' : issue.severity === 'high' ? 'High' : issue.severity === 'medium' ? 'Medium' : 'Low',
+      status: index === 0 ? 'Analyzing' : index === 1 ? 'Blocked' : 'Ready',
+      time: index === 0 ? '12m ago' : index === 1 ? '1h ago' : index === 2 ? '3h ago' : '5h ago',
+      filesChanged: 1 + Math.floor(Math.random() * 10),
+      insertions: 10 + Math.floor(Math.random() * 500),
+      deletions: Math.floor(Math.random() * 200)
+    }));
+    setPrs(generatedPRs);
+  };
+
+  const analyzePRs = () => {
+    setIsAnalyzing(true);
+    setTimeout(() => {
+      if (state.analysisResults?.issues) {
+        generatePRsFromIssues(state.analysisResults.issues);
+      }
+      setIsAnalyzing(false);
+    }, 1500);
+  };
+
+  // No repo selected
+  if (!state.repoUrl) {
+    return (
+      <div className="p-8 h-full flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto">
+            <GitBranch className="w-8 h-8 text-muted" />
+          </div>
+          <h2 className="text-xl font-bold">No Repository Selected</h2>
+          <p className="text-muted max-w-md">
+            Enter a repository URL on the home page to analyze pull requests.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // No analysis yet
+  if (prs.length === 0 && !isAnalyzing) {
+    return (
+      <div className="p-8 h-full flex flex-col items-center justify-center">
+        <div className="text-center space-y-6 max-w-lg">
+          <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto">
+            <GitPullRequest className="w-8 h-8 text-success" />
+          </div>
+          <div>
+            <h2 className="text-xl font-bold mb-2">PR Analysis</h2>
+            <p className="text-muted text-sm">
+              Analyze pull requests for <span className="text-white font-mono">{state.repoUrl}</span> to detect risks and generate intelligence reports.
+            </p>
+          </div>
+          <button 
+            onClick={analyzePRs}
+            className="btn-primary px-8 py-3 flex items-center gap-2 mx-auto"
+          >
+            <Sparkles className="w-4 h-4" />
+            Analyze PRs
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Analyzing
+  if (isAnalyzing) {
+    return (
+      <div className="p-8 h-full flex flex-col items-center justify-center">
+        <div className="text-center space-y-6">
+          <div className="relative">
+            <div className="w-20 h-20 border-4 border-white/10 border-t-success rounded-full animate-spin" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Loader2 className="w-8 h-8 text-success animate-spin" />
+            </div>
+          </div>
+          <div>
+            <h2 className="text-xl font-bold mb-2">Analyzing PRs</h2>
+            <p className="text-muted text-sm">Scanning for risks and generating intelligence...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-8 space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold uppercase tracking-tighter">Kinetic Intel</h1>
-          <p className="text-muted text-sm mt-1">Active PR stream and surgical intelligence report.</p>
+          <h1 className="text-3xl font-bold uppercase tracking-tighter">PR Analysis</h1>
+          <div className="flex items-center gap-2 mt-2">
+            <GitBranch className="w-4 h-4 text-muted" />
+            <span className="text-sm text-muted font-mono truncate max-w-xs">{state.repoUrl}</span>
+          </div>
         </div>
         <div className="flex gap-3">
-          <button className="btn-secondary flex items-center gap-2">
-            <Filter className="w-4 h-4" /> Filter
-          </button>
-          <button className="btn-primary flex items-center gap-2">
-            <GitPullRequest className="w-4 h-4" /> New Analysis
+          <button 
+            onClick={analyzePRs}
+            className="btn-primary flex items-center gap-2"
+          >
+            <GitPullRequest className="w-4 h-4" /> Refresh
           </button>
         </div>
       </div>
@@ -43,7 +160,7 @@ const PRAnalysis = () => {
         <div className="lg:col-span-2 space-y-4">
           <div className="flex items-center justify-between px-4">
             <span className="text-[10px] font-bold uppercase tracking-widest text-muted">Active Stream</span>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-white">4 Pull Requests</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-white">{prs.length} Pull Requests</span>
           </div>
           <div className="space-y-3">
             {prs.map((pr) => (
@@ -64,7 +181,7 @@ const PRAnalysis = () => {
                       </div>
                       <div className="flex items-center gap-3 mt-1">
                         <span className="text-[10px] text-muted flex items-center gap-1">
-                          <img src={`https://picsum.photos/seed/${pr.author}/16/16`} className="w-4 h-4 rounded-full" referrerPolicy="no-referrer" />
+                          <Box className="w-4 h-4" />
                           {pr.author}
                         </span>
                         <span className="text-[10px] text-muted flex items-center gap-1">
@@ -93,6 +210,12 @@ const PRAnalysis = () => {
                 </div>
               </div>
             ))}
+            {prs.length === 0 && (
+              <div className="card text-center py-12">
+                <CheckCircle2 className="w-12 h-12 text-success mx-auto mb-4" />
+                <p className="text-muted">No pending pull requests</p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -106,13 +229,13 @@ const PRAnalysis = () => {
             
             <div className="space-y-6">
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-muted block mb-2">Risk Blast Radius</span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-muted block mb-2">Risk Distribution</span>
                 <div className="h-24 flex items-end gap-1">
-                  {[40, 65, 30, 85, 45, 90, 55].map((h, i) => (
+                  {[40, 65, 30, prs.filter(p => p.risk === 'High').length * 20 + 20, 45, prs.length * 15, 55].map((h, i) => (
                     <div 
                       key={i} 
                       className="flex-1 bg-white/10 rounded-t-sm hover:bg-white/20 transition-all" 
-                      style={{ height: `${h}%` }} 
+                      style={{ height: `${Math.min(h, 100)}%` }} 
                     />
                   ))}
                 </div>
@@ -128,25 +251,25 @@ const PRAnalysis = () => {
                 <div className="flex items-start gap-3">
                   <ShieldAlert className="w-4 h-4 text-danger mt-0.5" />
                   <div>
-                    <h4 className="text-xs font-bold">Critical Path Intersection</h4>
+                    <h4 className="text-xs font-bold">Risk Analysis</h4>
                     <p className="text-[10px] text-muted mt-1 leading-relaxed">
-                      PR-1203 modifies the neural handshake which intersects with 4 critical system paths.
+                      {prs.filter(p => p.risk === 'High').length} high-risk PRs detected requiring attention.
                     </p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
                   <Activity className="w-4 h-4 text-success mt-0.5" />
                   <div>
-                    <h4 className="text-xs font-bold">Performance Delta</h4>
+                    <h4 className="text-xs font-bold">Activity</h4>
                     <p className="text-[10px] text-muted mt-1 leading-relaxed">
-                      PR-1204 expected to reduce memory partition latency by 14%.
+                      {prs.length} active pull requests in the last 24 hours.
                     </p>
                   </div>
                 </div>
               </div>
 
               <button className="w-full btn-primary text-xs uppercase tracking-widest font-bold py-3 mt-4">
-                Generate Full Audit
+                Generate Full Report
               </button>
             </div>
           </div>
@@ -158,10 +281,10 @@ const PRAnalysis = () => {
             </h3>
             <div className="space-y-3">
               {[
-                { label: 'Files Changed', value: '12' },
-                { label: 'Insertions', value: '+420', color: 'text-success' },
-                { label: 'Deletions', value: '-128', color: 'text-danger' },
-                { label: 'Test Coverage', value: '94.2%' },
+                { label: 'PRs Analyzed', value: prs.length.toString() },
+                { label: 'High Risk', value: prs.filter(p => p.risk === 'High').length.toString(), color: 'text-danger' },
+                { label: 'Medium Risk', value: prs.filter(p => p.risk === 'Medium').length.toString(), color: 'text-warning' },
+                { label: 'Low Risk', value: prs.filter(p => p.risk === 'Low').length.toString(), color: 'text-success' },
               ].map((item, i) => (
                 <div key={i} className="flex justify-between items-center py-2 border-b border-white/5 last:border-0">
                   <span className="text-[10px] font-bold uppercase text-muted">{item.label}</span>
